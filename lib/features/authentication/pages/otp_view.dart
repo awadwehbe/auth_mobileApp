@@ -5,9 +5,9 @@ import 'otp_input.dart'; // Assuming you have the OtpInput widget from the previ
 
 class OTPView extends StatefulWidget {
   final String? email;
-  final String? password;
 
-  OTPView({Key? key, required this.email, this.password}) : super(key: key);
+
+  OTPView({Key? key, required this.email}) : super(key: key);
 
   @override
   _OTPViewState createState() => _OTPViewState();

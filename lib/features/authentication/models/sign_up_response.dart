@@ -1,17 +1,17 @@
 // lib/features/authentication/models/sign_up_response.dart
-class SignUpResponse {
+class SignupResponseModel {
   final int statusCode;
   final String message;
   final UserData? data;
 
-  SignUpResponse({
+  SignupResponseModel({
     required this.statusCode,
     required this.message,
     this.data,
   });
 
-  factory SignUpResponse.fromJson(Map<String, dynamic> json) {
-    return SignUpResponse(
+  factory SignupResponseModel.fromJson(Map<String, dynamic> json) {
+    return SignupResponseModel(
       statusCode: json['statusCode'],
       message: json['message'],
       data: json['data'] != null ? UserData.fromJson(json['data']) : null,

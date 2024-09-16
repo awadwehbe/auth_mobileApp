@@ -1,5 +1,11 @@
 import 'package:auth_app/features/authentication/pages/login.dart';
+import 'package:auth_app/features/authentication/state_management/sign_up_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../app/routes/routes.dart';
+import '../repositories/sign_up_repository.dart';
+import '../state_management/sign_up_cubit.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -17,7 +23,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    //1-wrap the scaffold with blocProvider.
+    return BlocProvider(
+      //2-add this line
+      create: (_) => SignUpCubit(SignUpRepository()), // Provide your repository
+  child: Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
@@ -61,7 +71,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         ],
       ),
-    );
+    ),
+);
   }
 
   // Build header function
@@ -194,7 +205,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
       width: contentWidth,
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
+        //3-wrap the ElevatedButton with Bloc Consumer.
+        child: BlocConsumer<SignUpCubit, SignUpState>(
+  listener: (context, state) {
+    //4-inside listenner i  should listen for state of the cubit.
+    if(state is SignUpSuccess){
+      // Navigate to OTP page and pass the email as argument
+      Navigator.pushNamed(context,
+        AppRoutes.otp,
+        arguments: _emailController.text,);// Pass the email to OTPView)
+    }
+    else if(state is SignUpError){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.errorMessage),
+            backgroundColor: Colors.red,));
+    }
+  },
+  builder: (context, state) {
+    return ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             padding: EdgeInsets.symmetric(vertical: 15),
@@ -228,11 +256,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
               );
               return;
             }
+            // Trigger the sign-up event
+            context.read<SignUpCubit>().signUp(
+              firstName: _firstNameController.text,
+              lastName: _lastNameController.text,
+              email: _emailController.text,
+              password: _passwordController.text,
+            );
 
             // Add sign-up logic here
           },
-          child: Text('SIGN UP', style: TextStyle(fontSize: 18, color: Colors.purple)),
-        ),
+      child: state is SignUpLoading
+          ? CircularProgressIndicator(color: Colors.purple)
+          : Text('SIGN UP', style: TextStyle(fontSize: 18, color: Colors.purple)),
+    );
+  },
+),
       ),
     );
   }

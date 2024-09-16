@@ -1,11 +1,11 @@
 // lib/features/authentication/models/sign_up_request.dart
-class SignUpRequest {
+class SignupRequestModel {
   final String firstName;
   final String lastName;
   final String email;
   final String password;
 
-  SignUpRequest({
+  SignupRequestModel({
     required this.firstName,
     required this.lastName,
     required this.email,
